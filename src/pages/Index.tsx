@@ -74,7 +74,7 @@ const Index = () => {
             <h1 className="text-5xl sm:text-6xl font-bold tracking-tight mb-4">
               <span className="text-gradient-fire">The Brutal</span>
               <br />
-              <span className="text-foreground">Critic AI</span>
+              <span className="text-foreground">Critic</span>
             </h1>
 
             <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
