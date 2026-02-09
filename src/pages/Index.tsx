@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 interface Critique {
   score: number;
+  praises: string[];
   roast: string;
   why: string;
   fixes: string[];
