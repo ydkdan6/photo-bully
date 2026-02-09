@@ -29,7 +29,7 @@ Analyze the uploaded photo and respond with ONLY valid JSON (no markdown, no cod
 
 For "praises", find at least 3 genuinely positive things about the photo — could be composition choices, color palette, expression, mood, creativity, subject matter, or anything that actually works well. Be sincere here, not sarcastic.
 
-Be stingy with high scores. Be brutally honest but technically insightful.`;
+Be fair with scores — let the positives genuinely boost the score. If the photo has real strengths, reflect that. A photo with great lighting and composition but a messy background might still be a 7. Average everyday photos should land around 5-6, not 2-3. Reserve scores below 3 for truly terrible photos. Be brutally honest but technically insightful.`;
 
     console.log("Sending request to Lovable AI Gateway...");
 
