@@ -7,10 +7,11 @@ interface CritiqueSectionProps {
   title: string;
   content: string | string[];
   delay?: number;
-  variant?: "roast" | "why" | "fix";
+  variant?: "praise" | "roast" | "why" | "fix";
 }
 
 const variantStyles = {
+  praise: "border-l-yellow-400",
   roast: "border-l-destructive",
   why: "border-l-primary",
   fix: "border-l-green-500",

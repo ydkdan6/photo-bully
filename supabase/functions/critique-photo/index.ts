@@ -21,10 +21,13 @@ serve(async (req) => {
 Analyze the uploaded photo and respond with ONLY valid JSON (no markdown, no code fences) in this exact structure:
 {
   "score": <number 0-10>,
+  "praises": ["<genuine compliment 1>", "<genuine compliment 2>", "<genuine compliment 3>"],
   "roast": "<2-3 brutal witty sentences targeting lighting, background, pose, or energy>",
   "why": "<technical explanation of what's wrong — lighting, composition, color, etc>",
   "fixes": ["<tip 1>", "<tip 2>", "<tip 3>"]
 }
+
+For "praises", find at least 3 genuinely positive things about the photo — could be composition choices, color palette, expression, mood, creativity, subject matter, or anything that actually works well. Be sincere here, not sarcastic.
 
 Be stingy with high scores. Be brutally honest but technically insightful.`;
 
