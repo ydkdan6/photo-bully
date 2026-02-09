@@ -10,8 +10,8 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const GROQ_API_KEY = Deno.env.get("GROQ_API_KEY");
-    if (!GROQ_API_KEY) throw new Error("GROQ_API_KEY is not configured");
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
     const { imageBase64 } = await req.json();
     if (!imageBase64) throw new Error("No image provided");
@@ -28,14 +28,16 @@ Analyze the uploaded photo and respond with ONLY valid JSON (no markdown, no cod
 
 Be stingy with high scores. Be brutally honest but technically insightful.`;
 
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    console.log("Sending request to Lovable AI Gateway...");
+
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${GROQ_API_KEY}`,
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "openai/gpt-oss-120b",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           {
@@ -53,8 +55,8 @@ Be stingy with high scores. Be brutally honest but technically insightful.`;
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error("Groq API error:", response.status, errText);
-      return new Response(JSON.stringify({ error: `Groq API error: ${response.status}` }), {
+      console.error("AI Gateway error:", response.status, errText);
+      return new Response(JSON.stringify({ error: `AI Gateway error: ${response.status}` }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -63,12 +65,10 @@ Be stingy with high scores. Be brutally honest but technically insightful.`;
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content;
 
-    // Parse the JSON from the response
     let critique;
     try {
       critique = JSON.parse(content);
     } catch {
-      // Try extracting JSON from markdown code fences
       const match = content.match(/```(?:json)?\s*([\s\S]*?)```/);
       if (match) {
         critique = JSON.parse(match[1].trim());
