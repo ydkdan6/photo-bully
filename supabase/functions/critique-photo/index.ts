@@ -35,7 +35,7 @@ Be stingy with high scores. Be brutally honest but technically insightful.`;
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "llama-4-scout-17b-16e-instruct",
+        model: "llama-3.2-11b-vision-preview",
         messages: [
           { role: "system", content: systemPrompt },
           {
