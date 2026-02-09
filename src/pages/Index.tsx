@@ -2,32 +2,50 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Flame, Zap } from "lucide-react";
 import PhotoUpload from "@/components/PhotoUpload";
-import DemoResults from "@/components/DemoResults";
+import CritiqueResults from "@/components/CritiqueResults";
 import heroBg from "@/assets/hero-bg.jpg";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+interface Critique {
+  score: number;
+  roast: string;
+  why: string;
+  fixes: string[];
+}
 
 const Index = () => {
   const [photo, setPhoto] = useState<{ file: File; preview: string } | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [showResults, setShowResults] = useState(false);
+  const [critique, setCritique] = useState<Critique | null>(null);
 
   const handlePhotoSelect = (file: File, preview: string) => {
     setPhoto({ file, preview });
-    setShowResults(false);
+    setCritique(null);
   };
 
   const handleClear = () => {
     setPhoto(null);
-    setShowResults(false);
+    setCritique(null);
     setIsAnalyzing(false);
   };
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
+    if (!photo) return;
     setIsAnalyzing(true);
-    // Simulate analysis delay (replace with real AI call)
-    setTimeout(() => {
+    try {
+      const { data, error } = await supabase.functions.invoke("critique-photo", {
+        body: { imageBase64: photo.preview },
+      });
+      if (error) throw error;
+      if (data.error) throw new Error(data.error);
+      setCritique(data as Critique);
+    } catch (e: any) {
+      console.error("Analysis failed:", e);
+      toast.error(e.message || "Failed to analyze photo. Please try again.");
+    } finally {
       setIsAnalyzing(false);
-      setShowResults(true);
-    }, 2500);
+    }
   };
 
   return (
@@ -35,11 +53,7 @@ const Index = () => {
       {/* Hero */}
       <header className="relative overflow-hidden">
         <div className="absolute inset-0">
-          <img
-            src={heroBg}
-            alt=""
-            className="w-full h-full object-cover opacity-30"
-          />
+          <img src={heroBg} alt="" className="w-full h-full object-cover opacity-30" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
         </div>
 
@@ -86,7 +100,7 @@ const Index = () => {
 
           {/* Analyze Button */}
           <AnimatePresence>
-            {photo && !showResults && (
+            {photo && !critique && (
               <motion.div
                 className="flex justify-center"
                 initial={{ opacity: 0, y: 10 }}
@@ -123,22 +137,13 @@ const Index = () => {
 
           {/* Results */}
           <AnimatePresence>
-            {showResults && (
+            {critique && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
               >
-                <DemoResults />
-
-                <motion.p
-                  className="text-center text-xs text-muted-foreground mt-8 font-mono"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.5 }}
-                >
-                  ⚡ Demo mode — connect an AI vision API for real critiques
-                </motion.p>
+                <CritiqueResults critique={critique} />
               </motion.div>
             )}
           </AnimatePresence>

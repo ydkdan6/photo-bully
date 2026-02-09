@@ -1,1 +1,4 @@
 project_id = "eztcfaahdokijoqddyfl"
+
+[functions.critique-photo]
+verify_jwt = false
